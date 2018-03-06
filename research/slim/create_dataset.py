@@ -116,14 +116,14 @@ def _convert_dataset(split_name, filenames, class_names_to_ids, dataset_dir, dat
   """
   assert split_name in ['train', 'validation']
 
-  num_per_shard = int(math.ceil(len(filenames) / float(_NUM_SHARDS)))
+  num_per_shard = int(math.ceil(len(filenames) / float(shards)))
 
   with tf.Graph().as_default():
     image_reader = ImageReader()
 
     with tf.Session('') as sess:
 
-      for shard_id in range(_NUM_SHARDS):
+      for shard_id in range(shards):
         output_filename = _get_dataset_filename(
             dataset_dir, dataset_name, split_name, shard_id, shards)
 
@@ -152,7 +152,7 @@ def _convert_dataset(split_name, filenames, class_names_to_ids, dataset_dir, dat
 
 def _dataset_exists(dataset_dir, shards):
   for split_name in ['train', 'validation']:
-    for shard_id in range(_NUM_SHARDS):
+    for shard_id in range(shards):
       output_filename = _get_dataset_filename(
           dataset_dir, split_name, shard_id, shards)
       if not tf.gfile.Exists(output_filename):
