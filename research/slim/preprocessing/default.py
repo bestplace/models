@@ -104,7 +104,10 @@ def preprocess_for_train(image, height, width):
     # fashion based on the thread number.
     # Note that ResizeMethod contains 4 enumerated resizing methods.
 
+    image = tf.expand_dims(image, 0)
     image = tf.image.resize_bilinear(image, [height, width], align_corners=False)
+    image = tf.squeeze(image, [0])
+    
     ordering = tf.random_uniform([], maxval=1, dtype=tf.int32)
     image = distort_color(image, ordering)
 
@@ -134,7 +137,9 @@ def preprocess_for_eval(image, height, width):
     if image.dtype != tf.float32:
       image = tf.image.convert_image_dtype(image, dtype=tf.float32)
     
+    image = tf.expand_dims(image, 0)
     image = tf.image.resize_bilinear(image, [height, width], align_corners=False)
+    image = tf.squeeze(image, [0])
     
     return image
 

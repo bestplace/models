@@ -59,7 +59,7 @@ def get_split(dataset_name, split_name, dataset_dir, file_pattern=None, reader=N
   """
   if not file_pattern:
     file_pattern = _FILE_PATTERN
-  file_pattern = os.path.join(dataset_dir, file_pattern % split_name)
+  file_pattern = os.path.join(dataset_dir, file_pattern % (dataset_name, split_name))
   meta_pattern = os.path.join(dataset_dir, _META_FILE_PATTERN)
 
   with open(meta_pattern, 'r') as meta_file:
