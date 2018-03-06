@@ -24,6 +24,7 @@ from preprocessing import cifarnet_preprocessing
 from preprocessing import inception_preprocessing
 from preprocessing import lenet_preprocessing
 from preprocessing import vgg_preprocessing
+from preprocessing import default
 
 slim = tf.contrib.slim
 
@@ -68,10 +69,11 @@ def get_preprocessing(name, is_training=False):
       'vgg_a': vgg_preprocessing,
       'vgg_16': vgg_preprocessing,
       'vgg_19': vgg_preprocessing,
+      'default': default,
   }
 
   if name not in preprocessing_fn_map:
-    raise ValueError('Preprocessing name [%s] was not recognized' % name)
+    name = 'default'
 
   def preprocessing_fn(image, output_height, output_width, **kwargs):
     return preprocessing_fn_map[name].preprocess_image(

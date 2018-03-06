@@ -59,7 +59,6 @@ from __future__ import print_function
 import tensorflow as tf
 
 from tensorflow.python.platform import gfile
-from datasets import dataset_factory
 from nets import nets_factory
 
 
@@ -81,20 +80,12 @@ tf.app.flags.DEFINE_integer(
     'Batch size for the exported model. Defaulted to "None" so batch size can '
     'be specified at model runtime.')
 
-tf.app.flags.DEFINE_string('dataset_name', 'imagenet',
-                           'The name of the dataset to use with the model.')
-
 tf.app.flags.DEFINE_integer(
-    'labels_offset', 0,
-    'An offset for the labels in the dataset. This flag is primarily used to '
-    'evaluate the VGG and ResNet architectures which do not use a background '
-    'class for the ImageNet dataset.')
+    'num_classes', 2,
+    'Quantity of classes in network.')
 
 tf.app.flags.DEFINE_string(
     'output_file', '', 'Where to save the resulting file to.')
-
-tf.app.flags.DEFINE_string(
-    'dataset_dir', '', 'Directory to save intermediate dataset files to')
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -104,11 +95,9 @@ def main(_):
     raise ValueError('You must supply the path to save to with --output_file')
   tf.logging.set_verbosity(tf.logging.INFO)
   with tf.Graph().as_default() as graph:
-    dataset = dataset_factory.get_dataset(FLAGS.dataset_name, 'train',
-                                          FLAGS.dataset_dir)
     network_fn = nets_factory.get_network_fn(
         FLAGS.model_name,
-        num_classes=(dataset.num_classes - FLAGS.labels_offset),
+        num_classes=FLAGS.num_classes,
         is_training=FLAGS.is_training)
     image_size = FLAGS.image_size or network_fn.default_image_size
     placeholder = tf.placeholder(name='input', dtype=tf.float32,
