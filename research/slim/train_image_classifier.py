@@ -177,10 +177,6 @@ tf.app.flags.DEFINE_string(
 tf.app.flags.DEFINE_string(
     'dataset_dir', None, 'The directory where the dataset files are stored.')
 
-tf.app.flags.DEFINE_integer(
-    'num_classes', 2,
-    'Quantity of classes in network.')
-
 tf.app.flags.DEFINE_string(
     'model_name', 'inception_v3', 'The name of the architecture to train.')
 
@@ -412,7 +408,7 @@ def main(_):
     ######################
     network_fn = nets_factory.get_network_fn(
         FLAGS.model_name,
-        num_classes=FLAGS.num_classes,
+        num_classes=dataset.num_classes,
         weight_decay=FLAGS.weight_decay,
         is_training=True)
 
@@ -446,7 +442,7 @@ def main(_):
           num_threads=FLAGS.num_preprocessing_threads,
           capacity=5 * FLAGS.batch_size)
       labels = slim.one_hot_encoding(
-          labels, FLAGS.num_classes)
+          labels, dataset.num_classes)
       batch_queue = slim.prefetch_queue.prefetch_queue(
           [images, labels], capacity=2 * deploy_config.num_clones)
 
