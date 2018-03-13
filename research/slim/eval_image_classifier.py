@@ -58,12 +58,6 @@ tf.app.flags.DEFINE_string(
 tf.app.flags.DEFINE_string(
     'dataset_dir', None, 'The directory where the dataset files are stored.')
 
-tf.app.flags.DEFINE_integer(
-    'labels_offset', 0,
-    'An offset for the labels in the dataset. This flag is primarily used to '
-    'evaluate the VGG and ResNet architectures which do not use a background '
-    'class for the ImageNet dataset.')
-
 tf.app.flags.DEFINE_string(
     'model_name', 'inception_v3', 'The name of the architecture to evaluate.')
 
@@ -101,7 +95,7 @@ def main(_):
     ####################
     network_fn = nets_factory.get_network_fn(
         FLAGS.model_name,
-        num_classes=(dataset.num_classes - FLAGS.labels_offset),
+        num_classes=dataset.num_classes,
         is_training=False)
 
     ##############################################################
@@ -113,12 +107,11 @@ def main(_):
         common_queue_capacity=2 * FLAGS.batch_size,
         common_queue_min=FLAGS.batch_size)
     [image, label] = provider.get(['image', 'label'])
-    label -= FLAGS.labels_offset
 
     #####################################
     # Select the preprocessing function #
     #####################################
-    preprocessing_name = FLAGS.preprocessing_name or FLAGS.model_name
+    preprocessing_name = FLAGS.preprocessing_name
     image_preprocessing_fn = preprocessing_factory.get_preprocessing(
         preprocessing_name,
         is_training=False)
